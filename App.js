@@ -7,20 +7,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const NOTES_KEY = '@notes';
-  const Stack = createNativeStackNavigator()
-  const Tab = createBottomTabNavigator()
+const Stack = createNativeStackNavigator()
+const Tab = createBottomTabNavigator()
 
-  export default function App() {
-    return (
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="Notes" component={NotesStack} options={{ headerShown: false }} />
-          <Tab.Screen name="Tab Two" component={TabTwo} />
-          <Tab.Screen name="Tab Three" component={TabThree} />
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Notes" component={NotesStack} options={{ headerShown: false }} />
+        <Tab.Screen name="Tab Two" component={TabTwo} />
+        <Tab.Screen name="Tab Three" component={TabThree} />
         </Tab.Navigator>
-      </NavigationContainer>
-    );
-  }
+    </NavigationContainer>
+  );
+}
 
 const ListPage = ({ navigation }) => {
 
