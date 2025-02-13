@@ -1,11 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Pressable, FlatList } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import  AsyncStorage  from '@react-native-async-storage/async-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const NOTES_KEY = '@notes';
+  const Stack = createNativeStackNavigator()
+  const Tab = createBottomTabNavigator()
 
-export default function App() {
+  export default function App() {
+    return (
+      <NavigationContainer>
+        <Tab.Navigator>
+          <Tab.Screen name="Notes" component={NotesStack} options={{ headerShown: false }} />
+          <Tab.Screen name="Tab Two" component={TabTwo} />
+          <Tab.Screen name="Tab Three" component={TabThree} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
+
+const ListPage = ({ navigation }) => {
+
   const [text, setText] = useState("")
   const [notes, setNotes] = useState([])
 
@@ -41,6 +59,10 @@ export default function App() {
     setText("");
   }
 
+  function deleteAllNotes() {
+    setNotes([])
+  }
+
   return (
     <View style={styles.container}>
       
@@ -50,16 +72,61 @@ export default function App() {
         value={text}
         placeholder="Enter your note"
       />
-      <Pressable style={styles.button} onPress={() => saveInput(text)}>
-        <Text style={{ color: 'white' }}>Save</Text>
+      <Pressable style={styles.saveButton} onPress={() => saveInput(text)}>
+        <Text style={styles.saveButtonText}>Save</Text>
       </Pressable>
       <FlatList
         data={notes}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <Text style={{ padding: 10 }}>{item.name}</Text>}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => {
+          return (
+            <Pressable onPress={() => navigation.navigate("NoteDetailPage", { note: item })}>
+              <Text style={styles.noteItem}>
+                {item.name.length > 25 ? item.name.slice(0, 25) + "..." : item.name}
+              </Text>
+            </Pressable>
+          );
+        }}
       />
       <StatusBar style="auto" />
-      <Pressable></Pressable>
+      <Pressable style={styles.deleteButton} onPress={() => deleteAllNotes()}>
+        <Text style={styles.deleteButtonText}>Delete all</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const NoteDetailPage = ({ route }) => {
+  const { note } = route.params;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.noteDetailText}>{note.name}</Text>
+    </View>
+  );
+};
+
+function NotesStack() {
+  return (
+    <Stack.Navigator initialRouteName='ListPage'>
+      <Stack.Screen name='ListPage' component={ListPage}/>
+      <Stack.Screen name="NoteDetailPage" component={NoteDetailPage} options={{ title: 'Note Details' }} />
+    </Stack.Navigator>
+  )
+}
+
+function TabTwo() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.tabText}>Tab Two</Text>
+    </View>
+  );
+}
+
+function TabThree() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.tabText}>Tab Three</Text>
     </View>
   );
 }
@@ -76,10 +143,39 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
-  button: {
+  saveButton: {
     backgroundColor: 'blue',
-    padding: 10,
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
     marginBottom: 20,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  noteItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    fontSize: 16,
+  },
+  noteDetailText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    padding: 20,
+  },
+  deleteButton: {
+    backgroundColor: '#FF3B30',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
