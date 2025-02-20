@@ -14,7 +14,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Notes" component={NotesStack} options={{ headerShown: false }} />
+        <Tab.Screen name="Notes" component={NotesStack} />
         <Tab.Screen name="Tab Two" component={TabTwo} />
         <Tab.Screen name="Tab Three" component={TabThree} />
         </Tab.Navigator>
@@ -109,7 +109,7 @@ const NoteDetailPage = ({ route }) => {
 function NotesStack() {
   return (
     <Stack.Navigator initialRouteName='ListPage'>
-      <Stack.Screen name='ListPage' component={ListPage}/>
+      <Stack.Screen name='ListPage' component={ListPage} options={{ headerShown: false }}/>
       <Stack.Screen name="NoteDetailPage" component={NoteDetailPage} options={{ title: 'Note Details' }} />
     </Stack.Navigator>
   )
